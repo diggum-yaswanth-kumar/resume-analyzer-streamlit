@@ -2,9 +2,7 @@ import streamlit as st
 from PyPDF2 import PdfReader
 import re
 
-# -----------------------------
-# Page Config
-# -----------------------------
+
 st.set_page_config(
     page_title="Resume Analyzer",
     layout="centered",
@@ -19,9 +17,7 @@ st.markdown(
 
 st.divider()
 
-# -----------------------------
-# Skill Keywords (NOT a DB)
-# -----------------------------
+
 SKILLS_DB = [
     "python", "java", "c++", "sql", "mysql", "mongodb",
     "html", "css", "javascript", "react", "angular",
@@ -35,9 +31,7 @@ SKILLS_DB = [
     "api", "rest"
 ]
 
-# -----------------------------
-# Helper Functions
-# -----------------------------
+
 def extract_text_from_pdf(file):
     text = ""
     reader = PdfReader(file)
@@ -63,7 +57,7 @@ def extract_skills(text):
     found_skills = set()
 
     for skill in SKILLS_DB:
-        # 🚫 Ignore dangerous single-letter skills like "c"
+        
         if skill == "c":
             continue
 
@@ -87,9 +81,7 @@ def resume_suggestions(missing_skills):
     else:
         return ["Your resume matches the job description very well."]
 
-# -----------------------------
-# Inputs Section
-# -----------------------------
+
 st.subheader("📥 Upload Inputs")
 
 resume_file = st.file_uploader("Upload Resume (PDF)", type=["pdf"])
@@ -115,9 +107,6 @@ else:
 
 st.divider()
 
-# -----------------------------
-# Analyze Button
-# -----------------------------
 if st.button("🔍 Analyze Resume", use_container_width=True):
 
     if not resume_file:
@@ -134,7 +123,6 @@ if st.button("🔍 Analyze Resume", use_container_width=True):
         resume_skills = extract_skills(resume_text)
         jd_skills = extract_skills(jd_text)
 
-        # JD is source of truth
         matched_skills = sorted(jd_skills & resume_skills)
         missing_skills = sorted(jd_skills - resume_skills)
 
@@ -143,9 +131,7 @@ if st.button("🔍 Analyze Resume", use_container_width=True):
             if jd_skills else 0
         )
 
-    # -----------------------------
-    # Results
-    # -----------------------------
+
     st.subheader("📊 Analysis Results")
 
     st.metric("Skill Match Percentage", f"{match_percentage}%")
@@ -171,9 +157,7 @@ if st.button("🔍 Analyze Resume", use_container_width=True):
 
     st.divider()
 
-    # -----------------------------
-    # Suggestions
-    # -----------------------------
+
     st.markdown("### 🛠 Resume Improvement Suggestions")
     for s in resume_suggestions(missing_skills):
         st.write("•", s)
